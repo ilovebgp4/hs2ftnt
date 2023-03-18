@@ -122,15 +122,20 @@ def getroute4():
                         index= index+1
                 elif cfg[-2] == 'description':
                     comment = cfg[-1]                
-                    if is_address(cfg[3]):
+                    if len(cfg) <= 4 and is_address(cfg[3]):
+                        nexthop = cfg[3]
+                        device = 'null'  
+                        msg +='edit %s\nset dst %s\nset gateway %s\nset device %s\nset comment %s\nnext\n'%(index,prefix,nexthop,device,comment)
+                        index= index+1  
+                    elif len(cfg) > 4 and is_address(cfg[3]):
                         nexthop = cfg[3]
                         device = 'null' 
                         if cfg[4] == 10 or cfg[4] == 20:
                             distance = cfg[4]
                             msg +='edit %s\nset dst %s\nset gateway %s\nset distance %s\nset device %s\nset comment %s\nnext\n'%(index,prefix,nexthop,distance,device,comment)
                         else:    
-                            msg +='edit %s\nset dst %s\nset gateway %s\nset device %s\nnext\n'%(index,prefix,nexthop,device)
-                        index= index+1
+                            msg +='edit %s\nset dst %s\nset gateway %s\nset device %s\nset comment %s\nnext\n'%(index,prefix,nexthop,device,comment)
+                        index= index+1                  
                     elif len(cfg) > 5 and is_address(cfg[4]):
                         nexthop = cfg[4]
                         device = cfg[3]
@@ -138,8 +143,8 @@ def getroute4():
                             distance = cfg[5]
                             msg +='edit %s\nset dst %s\nset gateway %s\nset distance %s\nset device %s\nset comment %s\nnext\n'%(index,prefix,nexthop,distance,device,comment)
                         else:    
-                            msg +='edit %s\nset dst %s\nset gateway %s\nset device %s\nset comment %s\nnext\n'%(index,prefix,nexthop,device,comment)                                
-                        index= index+1
+                            msg +='edit %s\nset dst %s\nset gateway %s\nset distance 20\nset device %s\nset comment %s\nnext\n'%(index,prefix,nexthop,device,comment)                                
+                        index= index+1                  
                     else:
                         device = cfg[3]
                         msg +='edit %s\nset dst %s\nset device %s\nset distance 20\nset comment %s\nnext\n'%(index,prefix,device,comment)            
@@ -232,8 +237,8 @@ def AddrTrans(captured_lines):
 def main():
     try:
         #getservice()
-        #getroute4()
-        getpolicy()
+        getroute4()
+        #getpolicy()
         #getaddr()
     except Exception as e:
         print(e)
